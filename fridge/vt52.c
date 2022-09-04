@@ -14,7 +14,12 @@
 #define	termdef	1		/* don't define "term" external */
 
 #include        <stdio.h>
+#include        <string.h>
+#include        <stdarg.h>
+#include        <mint/osbind.h>
+#include        "debug.h"
 #include        "estruct.h"
+#include        "terminal.h"
 
 #if     VT52
 
@@ -27,33 +32,48 @@
 #define ESC     0x1B		/* ESC character.               */
 #define BEL     0x07		/* ascii bell character         */
 
-extern int ttopen();		/* Forward references.          */
-extern int ttgetc();
-extern int ttputc();
-extern int ttflush();
-extern int ttclose();
-extern int vt52move();
-extern int vt52eeol();
-extern int vt52eeop();
-extern int vt52beep();
-extern int vt52open();
-extern int vt52rev();
-extern int vt52cres();
-extern int vt52kopen();
-extern int vt52kclose();
+#define BC_CON  2
+
+extern void ttopen(void);		/* Forward references.          */
+extern void ttflush(void);
+extern void ttclose(void);
+static void vt52move(int, int);
+static void vt52eeol(void);
+static void vt52eeop(void);
+static void vt52beep(void);
+static void vt52open(void);
+static int vt52cres(char *);
+static void vt52kopen(void);
+static void vt52kclose(void);
+
+static int stputc(unicode_t c);
+static int stgetc(void);
+static void st52rev(int);
+
 
 #if COLOR
 extern int vt52fcol();
 extern int vt52bcol();
 #endif
 
+boolean eolexist = TRUE ;       /* does clear to EOL exist?     */
+boolean revexist = TRUE ;      /* does reverse video exist?    */
+boolean sgarbf = TRUE ;         /* State of screen unknown      */
+
+char sres[ 16] ;
+
+
+
+
 /*
  * Dispatch table.
  * All the hard fields just point into the terminal I/O code.
  */
 struct terminal term = {
-	NROW - 1,
-	NROW - 1,
+	NROW,
+	NCOL,
+	NROW,
+	NROW,
 	NCOL,
 	NCOL,
 	MARGIN,
@@ -63,14 +83,14 @@ struct terminal term = {
 	&ttclose,
 	&vt52kopen,
 	&vt52kclose,
-	&ttgetc,
-	&ttputc,
+	&stgetc,
+	&stputc,
 	&ttflush,
 	&vt52move,
 	&vt52eeol,
 	&vt52eeop,
 	&vt52beep,
-	&vt52rev,
+	&st52rev,
 	&vt52cres
 #if	COLOR
 	    , &vt52fcol,
@@ -81,35 +101,47 @@ struct terminal term = {
 #endif
 };
 
-vt52move(row, col)
-{
-	ttputc(ESC);
-	ttputc('Y');
-	ttputc(row + BIAS);
-	ttputc(col + BIAS);
+static int stputc(unicode_t c) {
+    /* No unicode support here. */
+    Bconout(BC_CON, (int)(c & 0xff));
+    return 0;
 }
 
-vt52eeol()
-{
-	ttputc(ESC);
-	ttputc('K');
+static int stgetc(void) {
+    return Crawcin() & 0xff;
 }
 
-vt52eeop()
+static void vt52move(int row, int col)
 {
-	ttputc(ESC);
-	ttputc('J');
+	stputc(ESC);
+	stputc('Y');
+	stputc(row + BIAS);
+	stputc(col + BIAS);
 }
 
-vt52rev(status)
-    /* set the reverse video state */
-int status;			/* TRUE = reverse video, FALSE = normal video */
-
+static void vt52eeol(void)
 {
-	/* can't do this here, so we won't */
+	stputc(ESC);
+	stputc('K');
 }
 
-vt52cres()
+static void vt52eeop(void)
+{
+	stputc(ESC);
+	stputc('J');
+}
+
+/*
+ * Set the reverse video state.
+ * TRUE = reverse video, FALSE = normal video.
+ */
+static void st52rev(int status)
+{
+    stputc(ESC);
+    stputc(status ? 'p' : 'q');
+}
+
+static int vt52cres(char *ch)
 {				/* change screen resolution - (not here though) */
 	return TRUE;
 }
@@ -124,15 +156,15 @@ vt52bcol()
 }
 #endif
 
-vt52beep()
+void vt52beep(void)
 {
 #ifdef  BEL
-	ttputc(BEL);
+	stputc(BEL);
 	ttflush();
 #endif
 }
 
-vt52open()
+void vt52open(void)
 {
 #if     V7 | BSD
 	char *cp;
@@ -147,15 +179,36 @@ vt52open()
 		exit(1);
 	}
 #endif
-	ttopen();
+    strcpy(sres, "TOS");
+    revexist = TRUE;
+    ttopen();
 }
 
-vt52kopen()
+void vt52kopen(void)
 {
 }
 
-vt52kclose()
+void vt52kclose(void)
 {
 }
+
+/*
+void pr(const char *s) {
+    for (const char *p = s; *p; p++) {
+        Bconout(1, *p);
+    }
+}
+
+void rsprintf(const char *fmt, ...) {
+    static char  buffer[1024];
+    va_list args;
+    va_start(args,fmt);
+    vsprintf(buffer, fmt, args);
+    va_end(args);
+
+    pr(buffer);
+}
+
+*/
 
 #endif

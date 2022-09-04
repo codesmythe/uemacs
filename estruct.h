@@ -20,7 +20,7 @@
 
 /* Machine/OS definitions. */
 
-#if defined(AUTOCONF) || defined(BSD) || defined(SYSV)
+#if defined(AUTOCONF) || defined(BSD) || defined(SYSV) || defined(__atarist__)
 
 /* Make an intelligent guess about the target system. */
 
@@ -38,7 +38,7 @@
 #undef BSD
 #endif
 
-#if defined(SYSV) || defined(u3b2) || defined(_AIX) || (defined(i386) && defined(unix)) || defined( __unix__)
+#if defined(SYSV) || defined(u3b2) || defined(_AIX) || (defined(i386) && defined(unix)) || (defined( __unix__) && !defined(__atarist__))
 #define	USG 1 /* System V UNIX */
 #else
 #define	USG 0
@@ -57,6 +57,12 @@
 #else
 # define UNIX	(BSD | USG)
 #endif	/*autoconf */
+
+#ifndef AUTOCONF
+# define ATARIST 0
+#else
+# define ATARIST __atarist__
+#endif
 
 /*	Debugging options	*/
 
@@ -85,7 +91,7 @@
 #define	VT100	0
 
 #define	ANSI	0
-#define	VT52	0
+#define	VT52	ATARIST
 #define	TERMCAP	UNIX
 #define	IBMPC	MSDOS
 

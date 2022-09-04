@@ -1,6 +1,6 @@
 /* tcap.c -- implements terminal.h */
 #include "terminal.h"
-
+#if TERMCAP
 /*	tcap.c
  *
  *	Unix V7 SysV and BS4 Termcap video driver
@@ -25,8 +25,6 @@
 #include "display.h"
 #include "estruct.h"
 #include "termio.h"
-
-#if TERMCAP
 
 boolean eolexist = TRUE ;	/* does clear to EOL exist      */
 boolean revexist = FALSE ;	/* does reverse video exist?    */

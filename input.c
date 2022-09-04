@@ -423,8 +423,10 @@ int getcmd(void)
 #if VT220
       proc_metac:
 #endif
+#if VT220
     if (c == 128+27)        /* CSI */
         goto handle_CSI;
+#endif
     /* process META prefix */
     if (c == (CONTROL | '[')) {
         c = get1key();
@@ -757,10 +759,12 @@ int getstring( const char *prompt, char *buf, int nbuf, int eolchar)
     }
 
 	TTflush() ;
+#if UNIX
 	if( tmpf != NULL) {
 		fclose( tmpf) ;
 		unlink( tmp) ;
 	}
+#endif
 
 	return retval ;
 }

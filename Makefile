@@ -34,6 +34,8 @@ else ifeq ($(uname_S),MSYS)
  DEFINES += -DCYGWIN -DSYSV
 else ifeq ($(uname_S),NetBSD)
  DEFINES += -DPOSIX -DBSD=1
+else ifeq ($(uname_S),Darwin)
+ DEFINES += -DPOSIX -DSYSV -D_DARWIN_C_SOURCE  -DTERMCAP
 else
  $(error $(uname_S) needs configuration)
 endif

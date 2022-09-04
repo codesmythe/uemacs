@@ -9,11 +9,12 @@
 
 #include "defines.h"
 #include "fileio.h"
+#include "estruct.h"
 
 
 /*	possible names and paths of help files under different OSs	*/
 const char *pathname[] = {
-#if	BSD | USG
+#if	BSD | USG | ATARIST
 	".emacsrc",
 	"emacs.hlp",
 #if	PKCODE

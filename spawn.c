@@ -76,6 +76,8 @@ int spawncli(int f, int n)
 	term.t_nrow = term.t_ncol = 0;
 #endif
 	return TRUE;
+#else
+        return FALSE;
 #endif
 }
 
@@ -108,6 +110,7 @@ void rtfrmshell(void)
  * done. Bound to "C-X !".
  */
 int spawn( int f, int n) {
+#if	USG | BSD
 	int s ;
 	char *line ;
 
@@ -115,7 +118,6 @@ int spawn( int f, int n) {
 	if( restflag)
 		return resterr();
 
-#if	USG | BSD
 	s = newmlarg( &line, "!", 0) ;
 	if( s != TRUE)
 		return s ;
@@ -137,6 +139,8 @@ int spawn( int f, int n) {
 	TTkopen();
 	sgarbf = TRUE;
 	return TRUE;
+#else
+	return FALSE;
 #endif
 }
 
@@ -147,6 +151,7 @@ int spawn( int f, int n) {
  */
 
 int execprg( int f, int n) {
+#if	USG | BSD
 	int s ;
 	char *line ;
 
@@ -154,7 +159,6 @@ int execprg( int f, int n) {
 	if( restflag)
 		return resterr() ;
 
-#if	USG | BSD
 	s = newmlarg( &line, "$", 0) ;
 	if( s != TRUE)
 		return s ;
@@ -172,6 +176,8 @@ int execprg( int f, int n) {
 	while ((s = tgetc()) != '\r' && s != ' ');
 	sgarbf = TRUE;
 	return TRUE;
+#else
+	return FALSE;
 #endif
 }
 

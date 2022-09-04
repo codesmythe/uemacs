@@ -5,13 +5,14 @@
 
 
 /* Must define one of
-	USG | BSD
+	USG | BSD | ATARIST
 */
-#define USG 1
+/* #define USG 1 */
+/*#define ATARIST 1 */
 
 #define PKCODE 1
 #define SCROLLCODE 1   /* scrolling code P.K.                          */
-#define ENVFUNC 1
+/* #define ENVFUNC 1  */
 
 #define	NSTRING	128		/* # of bytes, string buffers	*/
 

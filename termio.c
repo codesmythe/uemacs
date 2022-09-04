@@ -231,6 +231,7 @@ int ttgetc( void) {
     }
     return kbdq & 255;
 #endif
+    return 0;
 }
 
 #if TYPEAH
