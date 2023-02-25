@@ -1,0 +1,40 @@
+#
+# A GitHub Action to first build this version of microEmacs for EmuTOS.
+#
+
+name: build
+on: [ push, pull_request ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build microEmacs for EmuTOS
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Install packages
+        run: |
+          sudo add-apt-repository -y ppa:vriviere/ppa
+          sudo apt-get update
+          sudo apt-get install -y cmake cross-mint-essential
+      - name: Display package versions
+        run: |
+          git --version
+          make --version
+          ld --version
+          gcc --version
+          awk -W version
+          cmake --version
+          m68k-atari-mint-ld --version
+          m68k-atari-mint-ar --version
+          m68k-atari-mint-gcc --version
+      - name: Build uemacs.tos
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain_file.txt ..
+          make
+      - uses: actions/upload-artifact@v3
+        with:
+            name: MicroEmacs binary for EmuTOS
+            path: ${{ github.workspace }}/build/ue.tos
