@@ -1,4 +1,13 @@
-# README #
+
+# README for EmuTOS Port
+
+This repository fork is a port of microEmacs (back) to the Atari ST (EmuTOS).
+In the past, the ST was supported by this variant of microEmacs, but that
+support has been removed over time. This fork adds that support back in.
+
+Note that this branch is not yet up-to-date with master.
+
+# Original README #
 
 µEMACS (ue) on Cygwin/Linux, based on uEmacs/PK (em) from [kernel.org](
 https://git.kernel.org/pub/scm/editors/uemacs/uemacs.git/).
@@ -23,9 +32,3 @@ https://git.kernel.org/pub/scm/editors/uemacs/uemacs.git/).
 * dependencies: gcc, gmake, ncurses-devel.
 
 * make
-
-### Badges ###
-
-[![Coverity Status](
- https://scan.coverity.com/projects/4449/badge.svg)](
- https://scan.coverity.com/projects/4449)
