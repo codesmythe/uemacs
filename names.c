@@ -1,5 +1,7 @@
 /* names.c -- implements names.h */
+#include <stdio.h>
 #include "names.h"
+
 
 /* Name to function binding table.
  *
