@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain_file.txt ..
+          cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain.cmake ..
           make
       - uses: actions/upload-artifact@v3
         with:
